@@ -12,7 +12,6 @@ import { UploadBitstreamComponent } from './bitstreams/upload/upload-bitstream.c
 import { ThemedFullItemPageComponent } from './full/themed-full-item-page.component';
 import { itemPageResolver } from './item-page.resolver';
 import {
-  ITEM_ACCESS_BY_TOKEN_PATH,
   ITEM_EDIT_PATH,
   ORCID_PATH,
   UPLOAD_BITSTREAM_PATH,
@@ -66,13 +65,6 @@ export const ROUTES: Route[] = [
         path: ORCID_PATH,
         component: OrcidPageComponent,
         canActivate: [authenticatedGuard, orcidPageGuard],
-      },
-      {
-        path: ITEM_ACCESS_BY_TOKEN_PATH,
-        component: ThemedFullItemPageComponent,
-        resolve: {
-          menu: accessTokenResolver,
-        },
       },
     ],
     data: {
