@@ -14,6 +14,8 @@ import {
   Store,
 } from '@ngrx/store';
 import {
+  BehaviorSubject,
+  combineLatest,
   map,
   Observable,
 } from 'rxjs';
@@ -27,10 +29,11 @@ import {
   isAuthenticationLoading,
 } from '../../core/auth/selectors';
 import { CoreState } from '../../core/core-state.model';
-import { hasValue } from '../empty.util';
+import { hasValue, isEmpty } from '../empty.util';
 import { ThemedLoadingComponent } from '../loading/themed-loading.component';
 import { LogInContainerComponent } from './container/log-in-container.component';
 import { rendersAuthMethodType } from './methods/log-in.methods-decorator';
+import { AuthMethodType } from 'src/app/core/auth/models/auth.method-type';
 
 @Component({
   selector: 'ds-base-log-in',
@@ -47,6 +50,15 @@ export class LogInComponent implements OnInit {
    * @type {boolean}
    */
   @Input() isStandalonePage: boolean;
+
+  /**
+   * A list of allowed AuthMethodType
+   *  names representich which methods to display
+   *  (for example, the nav bar may like to just
+   *  show Shib, ORCID while the standalone login
+   *  page could have plain password auth)
+   */
+  @Input() allowedAuthMethods: AuthMethodType[];
 
   /**
    * The list of authentication methods available
@@ -72,14 +84,31 @@ export class LogInComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  /*
+    this.authMethods = combineLatest([
+      this.store.pipe(select(getAuthenticationMethods)),
+      this.allowedAuthMethods$,
+    ]).pipe(
+      map(([methods, allowedAuthMethods]) => methods
+        .filter(authMethod => isEmpty(allowedAuthMethods) || allowedAuthMethods.includes(authMethod.authMethodType))
+        .filter(authMethod => rendersAuthMethodType(authMethod.authMethodType) !== undefined)
+        .sort((method1, method2) => method1.position - method2.position),
+       ),
+    );
+    */
+
     this.authMethods = this.store.pipe(
       select(getAuthenticationMethods),
       map((methods: AuthMethod[]) => methods
+        // Allow specified methods, or all if list is empty
+        .filter((authMethod: AuthMethod) => (
+          isEmpty(this.allowedAuthMethods) || this.allowedAuthMethods.includes(authMethod.authMethodType)))
         .filter((authMethod: AuthMethod) => rendersAuthMethodType(authMethod.authMethodType) !== undefined)
         .sort((method1: AuthMethod, method2: AuthMethod) => method1.position - method2.position),
       ),
     );
-
+    console.dir(this.authMethods);
+    console.dir(this.allowedAuthMethods);
     // set loading
     this.loading = this.store.pipe(select(isAuthenticationLoading));
 

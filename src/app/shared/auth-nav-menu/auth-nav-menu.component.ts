@@ -51,6 +51,7 @@ import { HostWindowService } from '../host-window.service';
 import { ThemedLogInComponent } from '../log-in/themed-log-in.component';
 import { BrowserOnlyPipe } from '../utils/browser-only.pipe';
 import { ThemedUserMenuComponent } from './user-menu/themed-user-menu.component';
+import { AuthMethodType } from 'src/app/core/auth/models/auth.method-type';
 
 @Component({
   selector: 'ds-base-auth-nav-menu',
@@ -80,6 +81,8 @@ export class AuthNavMenuComponent implements OnInit {
   public user: Observable<EPerson>;
 
   public sub: Subscription;
+
+  public allowedAuthMethods: AuthMethodType[] = [AuthMethodType.Shibboleth];
 
   constructor(private store: Store<AppState>,
               private windowService: HostWindowService,

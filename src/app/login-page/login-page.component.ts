@@ -29,6 +29,7 @@ import {
   isNotEmpty,
 } from '../shared/empty.util';
 import { ThemedLogInComponent } from '../shared/log-in/themed-log-in.component';
+import { AuthMethodType } from '../core/auth/models/auth.method-type';
 
 /**
  * This component represents the login page
@@ -47,6 +48,8 @@ export class LoginPageComponent implements OnDestroy, OnInit {
    * @type {Subscription}
    */
   sub: Subscription;
+
+  public allowedAuthMethods: AuthMethodType[] = [AuthMethodType.Shibboleth, AuthMethodType.Password];
 
   /**
    * Initialize instance variables
